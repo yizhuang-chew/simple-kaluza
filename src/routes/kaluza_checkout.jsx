@@ -21,11 +21,11 @@ function KaluzaCheckout() {
     }, []);
 
     const fetchCart = async () => {
-        let cart = await getCart();
+        //let cart = await getCart();
 
-        console.log(cart);
+        //console.log(cart);
 
-        setCart(cart);
+        setCart([]);
     }
 
     const handleOption1Change = (e) => {
