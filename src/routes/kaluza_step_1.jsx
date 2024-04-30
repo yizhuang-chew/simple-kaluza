@@ -17,11 +17,26 @@ library.add(faHouse, faUser, faBagShopping, faHeart, faSearch, faBars)
 
 function KaluzaStep1() {
   let [products, setProducts] = useState(null);
+  const [input1Value, setInput1Value] = useState('');
+  const [input2Value, setInput2Value] = useState('');
+  const [selectedOption, setSelectedOption] = useState('');
 
 
   useEffect(() => {
     getProducts();
   }, []);
+
+  const handleInput1Change = (e) => {
+    setInput1Value(e.target.value);
+  };
+
+  const handleInput2Change = (e) => {
+    setInput2Value(e.target.value);
+  };
+
+  const handleDropdownChange = (e) => {
+    setSelectedOption(e.target.value);
+  };
 
   
   
@@ -88,8 +103,6 @@ function KaluzaStep1() {
     <div className="App">
         <Header />
 
-        
-
         <div className="container grid md:grid-cols-4 grid-cols-2 gap-6 pt-4 pb-16 items-start">
           
         
@@ -97,6 +110,55 @@ function KaluzaStep1() {
           <div className="col-span-3">
             <div className="flex items-center mb-4">
               <h2>Choose A Plan</h2>
+            </div>
+            <div className="grid md:grid-cols-1 grid-cols-1 gap-6">
+              <div className="bg-white shadow rounded overflow-hidden group">
+              <div className="container mx-auto mt-8">
+                  <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+                    <div className="flex items-center">
+                      <div className="w-1/3 mr-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2">
+                         Enter Your Street Address
+                        </label>
+                        <input
+                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                          type="text"
+                          value={input1Value}
+                          onChange={handleInput1Change}
+                          placeholder="Address"
+                        />
+                      </div>
+                      <div className="w-1/3 mr-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2">
+                          I'm Looking For
+                        </label>
+                        <input
+                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                          type="text"
+                          value={input2Value}
+                          onChange={handleInput2Change}
+                          placeholder="Electricity"
+                        />
+                      </div>
+                      <div className="w-1/3">
+                        <label className="block text-gray-700 text-sm font-bold mb-2">
+                          View Estimated Cost
+                        </label>
+                        <select
+                          className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+                          value={selectedOption}
+                          onChange={handleDropdownChange}
+                        >
+                          <option value="">Select an option</option>
+                          <option value="option1">Yearly</option>
+                          <option value="option2">Quarterly</option>
+                          <option value="option3">Monthly</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
             <div className="grid md:grid-cols-1 grid-cols-3 gap-1">
             {products.map((row, index) => (
