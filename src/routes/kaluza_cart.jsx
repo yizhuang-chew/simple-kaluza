@@ -18,16 +18,12 @@ function KaluzaCart() {
     }, []);
 
     const fetchCart = async () => {
-        let cart = await getCart();
+        //let cart = await getCart();
 
-        console.log(cart);
+        //console.log(cart);
 
-        setCart(cart);
+        //setCart(cart);
     }
-
-    if(!cart) {
-        return null
-      }
 
 
     return (

@@ -13,46 +13,46 @@ function Checkout() {
 
     const submitToCheckout = async() => {
 
-    let cart = await getCart();
+    //let cart = await getCart();
   
-    let result = await apiRoot
-      .carts()
-      .withId({ID: cart.id})
-      .post({
-        body: {
-          version: cart.version,
-          actions: [{
-            action: 'setCustomerId',
-            customerId: "8604704f-bf33-490f-a51a-39930877a3f9"
-          },
-          {
-            action: "setShippingAddress", 
-            address: {
-              country: "US"
-            }
-          }
-        ]
-        }
-    }).execute();
+    // let result = await apiRoot
+    //   .carts()
+    //   .withId({ID: cart.id})
+    //   .post({
+    //     body: {
+    //       version: cart.version,
+    //       actions: [{
+    //         action: 'setCustomerId',
+    //         customerId: "8604704f-bf33-490f-a51a-39930877a3f9"
+    //       },
+    //       {
+    //         action: "setShippingAddress", 
+    //         address: {
+    //           country: "US"
+    //         }
+    //       }
+    //     ]
+    //     }
+    // }).execute();
     
-    console.log("my cart", result)
+    //console.log("my cart", result)
 
-    let result1 = await apiRoot
-      .orders()
-      .post({
-        body: {
-          customerId: '8604704f-bf33-490f-a51a-39930877a3f9',
-          cart: {
-            id: cart.id,
-            version: result.body.version
-          },
-          version: result.body.version
-        }
-      })
-      .execute()
-      .catch((e) => console.log("here", e))
+    // let result1 = await apiRoot
+    //   .orders()
+    //   .post({
+    //     body: {
+    //       customerId: '8604704f-bf33-490f-a51a-39930877a3f9',
+    //       cart: {
+    //         id: cart.id,
+    //         version: result.body.version
+    //       },
+    //       version: result.body.version
+    //     }
+    //   })
+    //   .execute()
+    //   .catch((e) => console.log("here", e))
 
-        console.log("hello")
+    //     console.log("hello")
     }
 
     return (
