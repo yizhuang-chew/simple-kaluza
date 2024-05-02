@@ -16,18 +16,19 @@ library.add(faHouse, faUser, faBagShopping, faHeart, faSearch, faBars, faArrowRi
 
 
 function KaluzaCategoryStep2() {
-  let [products, setProducts] = useState(null);
+  let [product, setProduct] = useState(null);
+  let { productId } = useParams();
 
 
-  useEffect(() => {
-    getProducts();
+  useEffect((productId) => {
+    getProducts(productId);
   }, []);
-
   
-  
-  const getProducts = async () => {
+  const getProducts = async (productId) => {
 
-
+    if(product || !productId) {
+      return;
+    }
   };
 
   return (
@@ -41,7 +42,7 @@ function KaluzaCategoryStep2() {
             
             <div className="grid md:grid-cols-1 grid-cols-2 gap-6">
               <div className="bg-white shadow rounded overflow-hidden group">
-                <Link to={`/k/step3`}>
+                <Link to={`/k/step3/${productId}`}>
                   <div className="pt-4 pb-3 px-4 ">
                     <div className="">
                       <p className="text-xl font-semibold text-center">I'm a new customer <FontAwesomeIcon icon="fa-solid fa-arrow-right" /></p> 

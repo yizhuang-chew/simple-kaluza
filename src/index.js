@@ -36,11 +36,11 @@ const router = createBrowserRouter([
       element: <KaluzaStep1 />,
     },
     {
-      path: "k/step2",
+      path: "k/step2/:productId",
       element: <KaluzaStep2 />,
     },
     {
-      path: "k/step3",
+      path: "k/step3/:productId",
       element: <KaluzaStep3 />,
     },
     {

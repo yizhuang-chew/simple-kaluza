@@ -5,12 +5,12 @@ import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 // From old version - for customer login
 import SdkAuth from '@commercetools/sdk-auth';
 
-const CTP_PROJECT_KEY="telco-demo"
-const CTP_CLIENT_SECRET="JVWFOlCbvKSKOGh4Dik_XrLSSvCj5QEx"
-const CTP_CLIENT_ID="diCvQIjnUayXV19ADAtr4xVr"
-const CTP_AUTH_URL="https://auth.us-central1.gcp.commercetools.com"
-const CTP_API_URL="https://api.us-central1.gcp.commercetools.com"
-const CTP_SCOPES="manage_project:telco-demo"
+const CTP_PROJECT_KEY="kaluza-demo"
+const CTP_CLIENT_SECRET="Nq74cYdkSLicrm1G-GsZ05jk8y5GSGvg"
+const CTP_CLIENT_ID="xeIgK2BB_ed6WMaQUHG7IB2S"
+const CTP_AUTH_URL="https://auth.eu-central-1.aws.commercetools.com"
+const CTP_API_URL="https://api.eu-central-1.aws.commercetools.com"
+const CTP_SCOPES="manage_project:kaluza-demo"
 
 const projectKey = CTP_PROJECT_KEY;
 

@@ -6,7 +6,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Link } from 'react-router-dom';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { useEffect, useState, useContext, version } from 'react';
+import config from '../config'
 import { getCart, addToCart, updateCart } from '../util/cart-util';
+import { apiRoot } from '../commercetools';
 import { faBagShopping, faHeart, faHouse, faUser, faSearch, faBars, faClock } from '@fortawesome/free-solid-svg-icons'
 library.add(faHouse, faUser, faBagShopping, faHeart, faSearch, faBars, faClock)
 
@@ -18,12 +20,67 @@ function KaluzaCart() {
     }, []);
 
     const fetchCart = async () => {
-        //let cart = await getCart();
+        let myCart = await getCart();
 
-        //console.log(cart);
+        console.log(cart);
 
-        //setCart(cart);
+        if(myCart) {
+            setCart({
+                info: myCart,
+                lineItems: await includeLineItems(myCart.lineItems)
+            });
+        }
     }
+
+    const includeLineItems = async (lineItems) => {
+
+        let includedAddOns = [];
+
+        console.log("my lineItems", lineItems)
+    
+        // add the add ons
+        for (const [key, value] of Object.entries(lineItems)) {
+            
+            let obj = {
+                main: value,
+                included: await fetchAddons(value.custom?.fields, "product")
+            }
+            
+            includedAddOns.push(obj)
+        }
+    
+        return includedAddOns;
+    }
+
+    const fetchAddons = async (attributes, attrKey) => {
+
+        let includedAddOns = [];
+
+        console.log(attributes, attrKey)
+        
+        if (attributes) {
+            let subProduct =  await fetchAPIProduct(attributes.product);
+            includedAddOns.push(subProduct);
+        }
+    
+        return includedAddOns;
+    }
+
+    const fetchAPIProduct = async (prodId) => {
+        let res1 =  await apiRoot
+                    .products()
+                    .withId({ ID: prodId })
+                    .get()
+                    .execute()
+
+        return res1.body.masterData.current;
+    }
+
+    if(!cart) {
+        return null
+      }
+
+      console.log("my cart", cart);
 
 
     return (
@@ -37,11 +94,15 @@ function KaluzaCart() {
             <h4 className="text-gray-800 text-lg mb-4 font-medium uppercase pl-10">
             Your Cart
             </h4>
+
+            
             <div className="space-y-2">
                 <div className="">
+                {cart.lineItems.map((row, index) => (
+                    <div key={index}>
                     <div className="flex justify-between border-t border-gray-200 p-10">
                         <div>
-                            <h3 className="text-gray-800 font-medium">Gas AGL Value Saver</h3>
+                            <h3 className="text-gray-800 font-medium">{row.main.name[config.locale]}</h3>
                             <p className="text-sm text-gray-600">$854.00 incl GST estimated annual cost</p>
                             <p className="text-sm text-blue-600">Remove</p>
                         </div>
@@ -50,42 +111,23 @@ function KaluzaCart() {
                             <p className="text-gray-800 font-medium">Based on Usage</p>
                         </div>
                     </div>
-                    <div className="flex justify-between p-10">
-                        <div>
-                            <h3 className="text-gray-800 font-medium">Carbon Neutral - Gas</h3>
-                        </div>
+                    {row.included.map((includedRow, includedIndex) => (
+                        <div className="flex justify-between p-10">
+                            <div>
+                                <h3 className="text-gray-800 font-medium">{includedRow.name[config.locale]}</h3>
+                            </div>
 
-                        <div>
-                            <p className="text-gray-800 font-medium">Weekly</p>
+                            <div>
+                                <p className="text-gray-800 font-medium">Weekly</p>
+                            </div>
+                            <div>
+                                <p className="text-gray-800 font-medium">$.50</p>
+                            </div>
                         </div>
-                        <div>
-                            <p className="text-gray-800 font-medium">$.50</p>
-                        </div>
+                    ))}
+
                     </div>
-
-                    <div className="flex justify-between border-t border-gray-200 p-10">
-                        <div>
-                            <h3 className="text-gray-800 font-medium">Electricity AGL Value</h3>
-                            <p className="text-sm text-gray-600">12% less than Reference Price $1,960.00 incl GST annual estimated cost for a household using 4913 kWh on a single rate tariff in the Endeavour Energy network.</p>
-                            <p className="text-sm text-blue-600">Remove</p>
-                        </div>
-
-                        <div>
-                            <p className="text-gray-800 font-medium">Based on Usage</p>
-                        </div>
-                    </div>
-                    <div className="flex justify-between p-10">
-                        <div>
-                            <h3 className="text-gray-800 font-medium">Carbon Neutral - Electricity</h3>
-                        </div>
-
-                        <div>
-                            <p className="text-gray-800 font-medium">Weekly</p>
-                        </div>
-                        <div>
-                            <p className="text-gray-800 font-medium">$1.00</p>
-                        </div>
-                    </div>
+                ))}
                 </div>
             </div>
             

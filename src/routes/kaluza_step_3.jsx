@@ -6,34 +6,166 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import config from '../config'
 import { useEffect, useState, useContext, version } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { apiRoot } from '../commercetools';
 import { setQueryArgs } from '../util/searchUtil';
+import { getCart, addToCart, updateCart } from '../util/cart-util';
 import { faBagShopping, faHeart, faHouse, faUser, faSearch, faBars, faGripVertical, faList, faChevronRight, faArrowRight} from '@fortawesome/free-solid-svg-icons'
 
 
 library.add(faHouse, faUser, faBagShopping, faHeart, faSearch, faBars, faArrowRight)
 
 
+  
+
+
 function KaluzaCategoryStep3() {
-  let [products, setProducts] = useState(null);
-  const [isChecked1, setIsChecked1] = useState(false);
-  const [isChecked2, setIsChecked2] = useState(false);
+  
+  let { productId } = useParams();
+  let [cart, setCart] = useState(null);
+  let [product, setProduct] = useState(null);
+  let [isCheckedElectricity, setIsCheckedElectricity] = useState(false);
+  let [isCheckedGas, setIsCheckedGas] = useState(false);
+  const navigate = useNavigate();
 
 
   useEffect(() => {
-    getProducts();
+    getProducts(productId);
   }, []);
   
-  const getProducts = async () => {
+  const getProducts = async (productId) => {
+
+    if(product || !productId) {
+      return;
+    }
+
+    const queryArgs = setQueryArgs();
+
+    /* Last, but not least, add a couple of reference expansions to include channel and customer group data */
+    queryArgs.expand = [
+      'masterVariant.prices[*].channel',
+      'masterVariant.prices[*].customerGroup',
+      'masterVariant.prices[*].discounted.discount',
+      'masterVariant.price.discounted.discount',
+      'variants[*].prices[*].channel',
+      'variants[*].prices[*].customerGroup',
+      'variants[*].prices[*].discounted.discount',
+      'variants[*].price.discounted.discount',
+    ];
+
+    let res =  await apiRoot
+      .products()
+      .withId({ ID: productId })
+      .get({ queryArgs: queryArgs })
+      .execute();
+
+    if(res && res.body) {
+      let mainProduct = res.body.masterData.current;
+
+      let mainElectricity = await fetchAddons(mainProduct.masterVariant.attributes, "Electricity");
+      let mainGas = await fetchAddons(mainProduct.masterVariant.attributes, "Gas");
+      let electricityAddon = await fetchAddons(mainElectricity.masterData.current.masterVariant.attributes, "CarbonNeutralAddOn");
+      let gasAddon = await fetchAddons(mainGas.masterData.current.masterVariant.attributes, "CarbonNeutralAddOn");
+
+      setProduct({
+        main: res.body,
+        mainElectricity: mainElectricity,
+        mainGas: mainGas,
+        electricityAddon: electricityAddon,
+        gasAddon: gasAddon
+      });
+    }
   };
 
-  const handleCheckbox1Change = () => {
-    setIsChecked1(!isChecked1);
+  const fetchAPIProduct = async (prodId) => {
+    let res1 =  await apiRoot
+                .products()
+                .withId({ ID: prodId })
+                .get()
+                .execute()
+
+    return res1.body;
+  }
+
+  const fetchAddons = async (attributes, attrKey) => {
+
+    let subProduct = {};
+
+    // add the add ons
+    for (const [key, value] of Object.entries(attributes)) {
+        
+        if (value.name === attrKey) {
+          subProduct =  await fetchAPIProduct(value.value.id);
+        }
+    }
+
+    return subProduct;
+  }
+
+  const handleCheckboxElecrityChange = () => {
+    setIsCheckedElectricity(!isCheckedElectricity);
   };
 
-  const handleCheckbox2Change = () => {
-    setIsChecked2(!isChecked2);
+  const handleCheckboxGasChange = () => {
+    setIsCheckedGas(!isCheckedGas);
+  };
+
+  const deleteCart = async() => {
+    let cart = await getCart();
+    sessionStorage.removeItem('cartId');
+    setCart(null);    
+    if(cart) {
+      await apiRoot
+        .carts()
+        .withId({ ID: cart.id})
+        .delete({
+          queryArgs: {
+            version: cart.version
+          }
+        })
+        .execute();
+    }
+  }
+
+  const addItems = async() => {
+    await deleteCart();
+
+    let customElectricity = {}
+    let customGas = {}
+
+    console.log("product", product)
+
+
+    if (isCheckedElectricity) {
+      customElectricity = {
+        "type": {
+          "typeId": "type",
+          'key': "addOnElectricity"
+        },
+        "fields": {
+          "product": product.electricityAddon.id
+        }
+      }
+    }
+
+    const result1 = await addToCart(product.mainElectricity.id, product.mainElectricity.masterData.current.masterVariant.id, customElectricity, 1);
+
+    if (isCheckedGas) {
+      customGas = {
+        "type": {
+          "typeId": "type",
+          'key': "addOnGas"
+        },
+        "fields": {
+          "product": product.gasAddon.id
+        }
+      }
+    }
+
+    const result2 = await addToCart(product.mainGas.id, product.mainGas.masterData.current.masterVariant.id, customGas, 1);
+
+    navigate("/kcart")
+
   };
 
   return (
@@ -66,8 +198,8 @@ function KaluzaCategoryStep3() {
                       <input
                         type="checkbox"
                         className="mr-2 leading-tight"
-                        checked={isChecked1}
-                        onChange={handleCheckbox1Change}
+                        checked={isCheckedElectricity}
+                        onChange={handleCheckboxElecrityChange}
                       />
                     </div>
                   </div>
@@ -85,17 +217,18 @@ function KaluzaCategoryStep3() {
                       <input
                         type="checkbox"
                         className="mr-2 leading-tight"
-                        checked={isChecked2}
-                        onChange={handleCheckbox2Change}
+                        checked={isCheckedGas}
+                        onChange={handleCheckboxGasChange}
                       />
                     </div>
                   </div>
                 </div>
                 <div style={{ marginTop: "20px" }} className="">
                     <div style={{ marginTop: "10px" }}>
-                      <Link to={`/kcart`} className="block w-full py-3 px-4 text-center text-white bg-primary border border-primary rounded-md hover:bg-transparent hover:text-primary transition font-medium">
-                        Continue
-                      </Link>
+                    <button
+                        className="block w-full py-3 px-4 text-center text-white bg-primary border border-primary rounded-md hover:bg-transparent hover:text-primary transition font-medium"
+                    onClick={() => addItems()}>Continue</button>
+                      
                     </div>
                   </div>
             </div>

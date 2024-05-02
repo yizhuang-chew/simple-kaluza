@@ -37,8 +37,6 @@ function KaluzaStep1() {
   const handleDropdownChange = (e) => {
     setSelectedOption(e.target.value);
   };
-
-  
   
   const getProducts = async () => {
 
@@ -49,6 +47,7 @@ function KaluzaStep1() {
     let kProducts = [
       {
         name: "AGL Value Saver",
+        ctID: '1ad42068-8187-485f-88b9-a3e4c055b075',
         nameDescription: "Low Variable Rates",
         electricity: {
           percentage: "18%",
@@ -63,6 +62,7 @@ function KaluzaStep1() {
       },
       {
         name: "AGL Netflix Plan",
+        ctID: '4fb7dd43-3e81-4fae-96e8-2ae8c6a3af5a',
         nameDescription: "Great value electricity plan including Netflix",
         electricity: {
           percentage: "17%",
@@ -77,6 +77,7 @@ function KaluzaStep1() {
       },
       {
         name: "AGL Solar Savers",
+        ctID: 'f4c4c3e6-60d3-4d87-85ef-da16c62077c7',
         nameDescription: "Up to 10c/kWhsolar Fit",
         electricity: {
           percentage: "06%",
@@ -163,7 +164,7 @@ function KaluzaStep1() {
             <div className="grid md:grid-cols-1 grid-cols-3 gap-1">
             {products.map((row, index) => (
               <div key={index} className="bg-white shadow rounded overflow-hidden group">
-                <Link to={`/k/step2`}>
+                <Link to={`/k/step2/${row.ctID}`}>
                   <div className="pt-4 pb-3 px-4 ">
                     <div className="">
                       <p className="text-xl font-semibold text-center">{row.name}</p>

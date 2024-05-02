@@ -91,8 +91,8 @@ export const updateCart = async(actions) => {
 
 export const addToCart = async (productId, variantId, custom, quantity) => {
 
-  const currency = "USD";
-  const country = "US";
+  const currency = "AUD";
+  const country = "AU";
   const channelId = sessionStorage.getItem('channelId');
   const customerGroupId = sessionStorage.getItem('customerGroupId');
   const storeKey = sessionStorage.getItem('storeKey');
