@@ -189,6 +189,105 @@ export const addToCart = async (productId, variantId, custom, quantity) => {
   return result;
 }
 
+export const addToCartSKU = async (sku, custom, quantity) => {
+
+  const currency = "AUD";
+  const country = "AU";
+  const channelId = sessionStorage.getItem('channelId');
+  const customerGroupId = sessionStorage.getItem('customerGroupId');
+  const storeKey = sessionStorage.getItem('storeKey');
+
+  const lineItem = {
+    sku
+  };
+  if(channelId) {
+    lineItem.distributionChannel={
+      id: channelId,
+      typeId: 'channel'
+    }
+    lineItem.supplyChannel={
+      id: channelId,
+      typeId: 'channel'
+    }
+  }
+  // Add custom fields, if any
+  lineItem.custom = custom;
+
+  lineItem.quantity = quantity;
+  
+  let cart = await getCart();
+  
+  let result;
+  if(cart) {
+    // add item to current cart
+    console.log('Adding to current cart',cart.id,cart.version, lineItem);
+    result = await apiRoot
+      .carts()
+      .withId({ID: cart.id})
+      .post({
+        body: {
+          version: cart.version,
+          actions: [{
+            action: 'addLineItem',
+            ...lineItem
+          }]
+        }
+    }).execute()
+    .catch((e) => handleError(e));
+  } else {
+    console.log('creating cart & adding item');
+    // Create cart and add item in one go. Save cart id
+
+    console.log("my line items", lineItem);
+
+    const createCartBody = {
+      inventoryMode: 'None',
+      currency: currency,
+      lineItems: [lineItem],
+      custom: {
+        type: {
+          typeId: "type",
+          key: "Order",
+        },
+        fields: {
+          CustomerType: "New",
+          PostalCode: "2000",
+          NewAddress: true,
+          MedicalSupport: false,
+        }
+      }
+    };
+    if(country) {
+      createCartBody.country = country;
+    }
+    if(customerGroupId) {
+      createCartBody.customerGroup = {
+        typeId: 'customer-group',
+        id: customerGroupId,
+      }
+    }
+    if(storeKey) {
+      createCartBody.store = {
+        typeId: 'store',
+        key: storeKey,
+      }
+    }
+  
+    result = await apiRoot
+      .carts()
+      .post({
+        body: createCartBody
+      })
+      .execute()
+      .catch((e)  => handleError(e));
+  }
+  if(result) {
+    console.log('result',result);
+    sessionStorage.setItem('cartId',result.body.id);
+  }
+  return result;
+}
+
 export const convertToOrder = async(cartId, cartVersion) => {
   let result;
   result = await apiRoot.orders()

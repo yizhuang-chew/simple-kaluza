@@ -151,7 +151,33 @@ function KaluzaCart() {
                   )
               )}
             </div>
+            <div className="">
+              {cart.lineItems.map(
+                (row, index) =>
+                  (row.main.productType.id ===
+                    "d569c67f-9af3-47b2-9bb8-4eab264f2555") && (
+                    <div key={index}>
+                      <div className="flex justify-between border-t border-gray-200 p-10">
+                        <div>
+                          <h3 className="text-gray-800 font-medium">
+                            {row.main.name[config.locale]}
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            {row.main.variant.sku}
+                          </p>
+                          <p className="text-sm text-blue-600">Remove</p>
+                        </div>
 
+                        <div>
+                          <p className="text-gray-800 font-medium">
+                          + ${Math.round(row.main?.price?.value.centAmount/100 ? row.main?.price?.value.centAmount/100: 0).toFixed(2)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )
+              )}
+            </div>
             <div className="">
               {cart.lineItems.map(
                 (row, index) =>
