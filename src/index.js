@@ -19,6 +19,7 @@ import KaluzaStep1 from "./routes/kaluza_step_1";
 import KaluzaStep2 from "./routes/kaluza_step_2";
 import KaluzaStep3 from "./routes/kaluza_step_3";
 import KaluzaCart from "./routes/kaluza_cart";
+import KaluzaThankYou from "./routes/kaluza_thankyou";
 import KaluzaCheckout from "./routes/kaluza_checkout";
 
 const router = createBrowserRouter([
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
     {
       path: "/kcheckout",
       element: <KaluzaCheckout />,
+    },
+    {
+      path: "/kthankyou",
+      element: <KaluzaThankYou />,
     },
     {
       path: "/cart",

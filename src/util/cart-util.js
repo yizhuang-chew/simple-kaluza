@@ -142,10 +142,21 @@ export const addToCart = async (productId, variantId, custom, quantity) => {
     console.log("my line items", lineItem);
 
     const createCartBody = {
-      inventoryMode: 'ReserveOnOrder',
+      inventoryMode: 'None',
       currency: currency,
       lineItems: [lineItem],
-      
+      custom: {
+        type: {
+          typeId: "type",
+          key: "Order",
+        },
+        fields: {
+          CustomerType: "New",
+          PostalCode: "2000",
+          NewAddress: true,
+          MedicalSupport: false,
+        }
+      }
     };
     if(country) {
       createCartBody.country = country;
@@ -176,4 +187,22 @@ export const addToCart = async (productId, variantId, custom, quantity) => {
     sessionStorage.setItem('cartId',result.body.id);
   }
   return result;
+}
+
+export const convertToOrder = async(cartId, cartVersion) => {
+  let result;
+  result = await apiRoot.orders()
+     .post({
+       body: {
+       cart: {
+         id: cartId,
+         version: cartVersion
+       },
+       version: cartVersion
+     }
+   })
+   .execute()
+   .catch((e) => console.log("here", e))
+
+   return result;
 }

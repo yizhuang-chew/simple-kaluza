@@ -1,65 +1,122 @@
 import logo from "../assets/images/logo.svg";
 import agllogo from "../assets/images/agl-jtc-logo.svg";
-import banner from "../assets/images/main.png";
+import thankyoubanner from "../assets/images/banner-thankyou.png";
 import "../App.css";
 import "../Main.css";
 import Header from "../components/header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Link } from "react-router-dom";
-
 import { library } from "@fortawesome/fontawesome-svg-core";
+import config from "../config";
+import { useEffect, useState, useContext, version } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { apiRoot } from "../commercetools";
+import { setQueryArgs } from "../util/searchUtil";
+import { getCart, addToCart, updateCart } from "../util/cart-util";
 import {
   faBagShopping,
   faHeart,
-  faStar,
   faHouse,
   faUser,
   faSearch,
   faBars,
+  faGripVertical,
+  faList,
+  faChevronRight,
+  faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
-library.add(faHouse, faUser, faBagShopping, faHeart, faSearch, faBars, faStar);
 
-function Home() {
+library.add(
+  faHouse,
+  faUser,
+  faBagShopping,
+  faHeart,
+  faSearch,
+  faBars,
+  faArrowRight
+);
+
+function KaluzaThankYou() {
   return (
     <div className="App">
       <Header />
 
-      <div
-        className="bg-cover bg-no-repeat bg-center py-36"
-        style={{
-          marginTop: "-1em",
-          color: "white",
-          backgroundImage: 'url("assets/images/main.png")',
-        }}
-      >
-        <div className="container">
-          <h1 className="text-4xl font-medium mb-4 capitalize font-display">
-            $200 sign-up credit
-          </h1>
-          <h1 className="text-4xl font-medium mb-4 capitalize font-display">
-            when you join AGL electricity
-          </h1>
-          <p className="text-black">
-            Plus, get Netflix includved for the life of your plan with the AGL
-            Netflix Plan.
-          </p>
-          <div className="mt-12">
-            <Link
-              to={`/k/step1`}
-              href="/c/aeeb3d68-a221-4217-b2a0-821a12abfd8c"
-              className="bg-primary border border-primary text-white px-8 py-3 font-medium 
-                            rounded-md hover:bg-transparent hover:text-primary"
+      <div className="container grid">
+        <img src={thankyoubanner} alt="thankyoubanner" />
+      </div>
+      <div className="contain py-16">
+        <div className="max-w-lg mx-auto shadow px-6 py-7 rounded overflow-hidden">
+          <h2 className="text-2xl uppercase font-medium mb-1">
+            Login To Manage Your Plans
+          </h2>
+          <form action="#" method="post" autoComplete="off">
+            <div className="space-y-2">
+              <div>
+                <label htmlFor="email" className="text-gray-600 mb-2 block">
+                  Email address
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  className="block w-full border border-gray-300 px-4 py-3 text-gray-600 text-sm rounded focus:ring-0 focus:border-primary placeholder-gray-400"
+                  placeholder="youremail.@domain.com"
+                />
+              </div>
+              <div>
+                <label htmlFor="password" className="text-gray-600 mb-2 block">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  id="password"
+                  className="block w-full border border-gray-300 px-4 py-3 text-gray-600 text-sm rounded focus:ring-0 focus:border-primary placeholder-gray-400"
+                  placeholder="*******"
+                />
+              </div>
+            </div>
+            <div className="mt-4">
+              <button
+                type="submit"
+                className="block w-full py-2 text-center text-white bg-primary border border-primary rounded hover:bg-transparent hover:text-primary transition uppercase font-roboto font-medium"
+              >
+                Login
+              </button>
+            </div>
+          </form>
+          {/* login with */}
+          <div className="mt-6 flex justify-center relative">
+            <div className="text-gray-600 uppercase px-3 bg-white z-10 relative">
+              Or login with
+            </div>
+            <div className="absolute left-0 top-3 w-full border-b-2 border-gray-200" />
+          </div>
+          <div className="mt-4 flex gap-4">
+            <a
+              href="#"
+              className="w-1/2 py-2 text-center text-white bg-blue-800 rounded uppercase font-roboto font-medium text-sm hover:bg-blue-700"
             >
-              Learn More
-            </Link>
+              facebook
+            </a>
+            <a
+              href="#"
+              className="w-1/2 py-2 text-center text-white bg-red-600 rounded uppercase font-roboto font-medium text-sm hover:bg-red-500"
+            >
+              google
+            </a>
           </div>
         </div>
       </div>
-      <footer className="pt-16 pb-12 border-t border-gray-100 gradientBlue">
+
+      <footer
+        className="pt-16 pb-12 border-t border-gray-100 gradientBlue"
+      >
         <div className="container grid grid-cols-1">
           <div className="col-span-1 space-y-4">
             <img src={agllogo} alt="logo" className="w-30" />
-            <div className="mr-2"></div>
+            <div className="mr-2">
+              
+            </div>
             <div className="flex space-x-5">
               <a href="#" className="text-gray-400 hover:text-gray-500">
                 <i className="fa-brands fa-facebook-square" />
@@ -201,6 +258,4 @@ function Home() {
   );
 }
 
-export default Home;
-
-<img src={logo} className="App-logo" alt="logo" />;
+export default KaluzaThankYou;
