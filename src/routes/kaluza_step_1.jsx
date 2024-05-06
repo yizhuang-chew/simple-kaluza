@@ -165,7 +165,7 @@ function KaluzaStep1() {
                       className="pt-5 border-t-2 border-zinc-100"
                     ></div>
                     {row.electricity && (
-                      <div style={{ marginTop: "20px" }} className="">
+                      <div style={{ marginTop: "20px" }} className="min-h-60">
                         <p className="text-sm font-semibold">Electricity</p>
                         <div className="flex items-baseline mb-1 space-x-2">
                           <div style={{ marginRight: "50px" }}>
@@ -189,7 +189,7 @@ function KaluzaStep1() {
                       </div>
                     )}
                     {row.gas && (
-                      <div style={{ marginTop: "20px" }} className="">
+                      <div style={{ marginTop: "20px" }} className="min-h-60">
                         <p className="text-sm font-semibold">Gas</p>
                         <div className="flex items-baseline mb-1 space-x-2">
                           <div style={{ marginRight: "50px" }}>
